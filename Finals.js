@@ -1,9 +1,7 @@
-// Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Set current year in footer
+
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
-    // Loading animation
     const loadingScreen = document.getElementById('loading-screen');
     const loadingBar = document.getElementById('loading-bar');
     const loadingBarGlow = document.querySelector('.loading-bar-glow');
@@ -249,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add fade-in and slide-up animations to elements as they come into view
     const animateOnScroll = () => {
-        const elements = document.querySelectorAll('.section-title, .subsection-title, .profile-container, .timeline-item, .skill-category, .service-card, .project-card, .contact-container');
+        const elements = document.querySelectorAll('.section-title, .subsection-title, .profile-container, .timeline-item, .skill-category, .service-card, .project-card, .contact-container, .gallery-item');
         
         elements.forEach(element => {
             const elementPosition = element.getBoundingClientRect().top;
@@ -262,7 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Add slide-up animation to certain elements
                     if (element.classList.contains('service-card') || 
                         element.classList.contains('project-card') || 
-                        element.classList.contains('timeline-item')) {
+                        element.classList.contains('timeline-item') ||
+                        element.classList.contains('gallery-item')) {
                         element.classList.add('slide-up');
                     }
                 }
@@ -289,4 +288,193 @@ document.addEventListener('DOMContentLoaded', function() {
                       '" viewBox="0 0 300 150"%3E%3Crect fill="%23374151" width="300" height="150"/%3E%3Ctext fill="%23ffffff" font-family="sans-serif" font-size="30" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EImage%3C/text%3E%3C/svg%3E';
         });
     });
+
+    // Gallery functionality
+    const galleryData = [
+        {
+            title: "E-Commerce Platform",
+            description: "Modern online shopping experience with cart, payments, and admin dashboard. Built with React, Node.js, and MongoDB for scalable e-commerce solutions.",
+            image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop",
+            tags: ["React", "Node.js", "MongoDB"],
+            category: ["web", "fullstack"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        },
+        {
+            title: "Portfolio Website",
+            description: "Responsive portfolio with modern design and smooth animations. Features custom cursor, loading animations, and interactive elements.",
+            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
+            tags: ["HTML", "CSS", "JavaScript"],
+            category: ["frontend", "web"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        },
+        {
+            title: "Crypto Dashboard",
+            description: "Real-time cryptocurrency tracking with portfolio management. Integrates with multiple APIs for live market data and price alerts.",
+            image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop",
+            tags: ["React", "Web3", "APIs"],
+            category: ["blockchain", "web"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        },
+        {
+            title: "Task Management App",
+            description: "Collaborative task management with real-time updates. Features team collaboration, project tracking, and deadline management.",
+            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
+            tags: ["React", "Express", "Socket.io"],
+            category: ["fullstack", "web"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        },
+        {
+            title: "Business Landing Page",
+            description: "Modern landing page with conversion optimization. Features responsive design, contact forms, and SEO optimization.",
+            image: "https://images.unsplash.com/photo-1517694712202-14f9267984c2?w=800&h=600&fit=crop",
+            tags: ["HTML", "CSS", "JavaScript"],
+            category: ["frontend", "web"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        },
+        {
+            title: "DeFi Platform",
+            description: "Decentralized finance platform with yield farming. Smart contract integration for staking, lending, and liquidity provision.",
+            image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
+            tags: ["Solidity", "Web3", "DeFi"],
+            category: ["blockchain", "fullstack"],
+            liveUrl: "https://johnpaulweb.pages.dev/",
+            githubUrl: "https://github.com/JohnPaulWeb?tab=repositories"
+        }
+    ];
+
+    let currentLightboxIndex = 0;
+    let filteredGalleryData = [...galleryData];
+
+    // Gallery filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            const filter = button.getAttribute('data-filter');
+            filterGallery(filter);
+        });
+    });
+
+    function filterGallery(filter) {
+        galleryItems.forEach((item, index) => {
+            const categories = item.getAttribute('data-category').split(' ');
+            
+            if (filter === 'all' || categories.includes(filter)) {
+                item.classList.remove('hidden');
+                // Add animation delay based on visible items
+                setTimeout(() => {
+                    item.classList.add('animate-in');
+                }, index * 100);
+            } else {
+                item.classList.add('hidden');
+                item.classList.remove('animate-in');
+            }
+        });
+
+        // Update filtered data for lightbox
+        if (filter === 'all') {
+            filteredGalleryData = [...galleryData];
+        } else {
+            filteredGalleryData = galleryData.filter(item => 
+                item.category.includes(filter)
+            );
+        }
+    }
+
+    // Lightbox functionality
+    function openLightbox(index) {
+        currentLightboxIndex = index;
+        const lightbox = document.getElementById('lightbox');
+        const data = filteredGalleryData[index];
+
+        // Update lightbox content
+        document.getElementById('lightbox-image').src = data.image;
+        document.getElementById('lightbox-title').textContent = data.title;
+        document.getElementById('lightbox-description').textContent = data.description;
+        document.getElementById('lightbox-live').href = data.liveUrl;
+        document.getElementById('lightbox-github').href = data.githubUrl;
+
+        // Update tags
+        const tagsContainer = document.getElementById('lightbox-tags');
+        tagsContainer.innerHTML = '';
+        data.tags.forEach(tag => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'tag';
+            tagElement.textContent = tag;
+            tagsContainer.appendChild(tagElement);
+        });
+
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function nextImage() {
+        currentLightboxIndex = (currentLightboxIndex + 1) % filteredGalleryData.length;
+        openLightbox(currentLightboxIndex);
+    }
+
+    function prevImage() {
+        currentLightboxIndex = (currentLightboxIndex - 1 + filteredGalleryData.length) % filteredGalleryData.length;
+        openLightbox(currentLightboxIndex);
+    }
+
+    // Keyboard navigation for lightbox
+    document.addEventListener('keydown', (e) => {
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox.classList.contains('active')) {
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    prevImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+            }
+        }
+    });
+
+    // Load more functionality
+    const loadMoreBtn = document.getElementById('load-more-btn');
+
+    loadMoreBtn.addEventListener('click', () => {
+        // Redirect to GitHub repositories
+        window.open('https://github.com/JohnPaulWeb?tab=repositories', '_blank');
+    });
+
+    // Gallery item hover effects
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'translateY(-5px)';
+        });
+
+        item.addEventListener('mouseleave', () => {
+            item.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Make functions global for onclick handlers
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+    window.nextImage = nextImage;
+    window.prevImage = prevImage;
 });
